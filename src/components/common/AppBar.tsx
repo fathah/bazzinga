@@ -1,34 +1,40 @@
 import React, { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { APP_COLORS } from '../../constants/colors.ts';
 import { useAppSelector } from '../../redux/types/core.ts';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../../redux/slices/userSlice.ts';
+import {useNavigation} from "@react-navigation/native";
 
 
 type Props = {
-  title?: string
+  title?: string;
+  hasBackButton?: boolean
 }
 
-const AppBar = ({title}:Props) => {
-  const insets = useSafeAreaInsets();
+const AppBar = ({title,hasBackButton}:Props) => {
   const userId = useAppSelector(state=>state.user).userId;
   const dispatch = useDispatch();
+  const navigator = useNavigation();
 
   const logout = useCallback(()=>{
     dispatch(clearUser())
   },[dispatch]);
 
+  const goBack = useCallback(()=>navigator.goBack(),[navigator]);
+
   return (
     <View style={style.wrapper}>
-      <View/>
-      <View
-        style={{
-          height: insets.top,
-        }}
-      />
-      <Text style={style.title}>{title}</Text>
+
+
+      <View style={style.row}>
+
+        {hasBackButton ? <TouchableOpacity onPress={goBack}>
+          <Text style={style.backBtnLabel}>&larr;</Text>
+        </TouchableOpacity>:<View/>}
+        <Text style={style.title}>{title}</Text>
+        <View/>
+      </View>
 
       <TouchableOpacity onPress={logout} style={style.userId}>
         <Text style={style.text}>{userId??'Not Logged'}</Text>
@@ -48,7 +54,9 @@ const style = StyleSheet.create({
   },
   title:{
     color:'white',
-    fontSize:18, fontWeight:'bold'
+    fontSize:18,
+    fontWeight:'bold',
+    textAlign:'left'
   },
   userId:{
     position:'absolute',
@@ -62,5 +70,17 @@ const style = StyleSheet.create({
     paddingVertical:5,
     paddingHorizontal:10,
     borderRadius:5
+  },
+  row:{
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-between',
+    width:'100%',
+    paddingHorizontal:20
+  },
+  backBtn :{},
+  backBtnLabel:{
+    color:'white',
+    fontSize:20
   }
 });

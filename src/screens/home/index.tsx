@@ -8,6 +8,7 @@ import { setUser } from '../../redux/slices/userSlice.ts';
 import { USERS } from '../../constants/tokens.ts';
 import { useDispatch } from 'react-redux';
 import ChatController from '../../stream/connect.ts';
+import AppWrapper from "../../components/layouts/AppWrapper.tsx";
 
 const Home = () => {
   const curUserId = useAppSelector(state => state.user.userId);
@@ -50,8 +51,7 @@ const Home = () => {
   },[onLogin]);
 
   return (
-    <View  style={style.wrapper} >
-      <AppBar title="2050 Whisper"/>
+    <AppWrapper  title="⚡️ Bazzinga">
       <View  style={style.container}>
         {curUserId ? <UserMenu/>: <View style={style.loginContainer}>
           <Text style={style.title}>Select an user to Login</Text>
@@ -61,7 +61,7 @@ const Home = () => {
         </View>}
       </View>
 
-    </View>
+    </AppWrapper>
   );
 };
 export default Home;

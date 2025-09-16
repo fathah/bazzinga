@@ -1,19 +1,17 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { StatusBar } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import AppStackNavigator from './src/navigation/AppStackNavigator.tsx';
+import useIsDarkMode from './src/hooks/useIsDarkMode.ts';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistor, store } from './src/redux/store.ts';
+import { StreamIOProvider } from './src/stream/context.tsx';
+import { OverlayProvider } from 'stream-chat-react-native';
+import React from 'react';
+import ChatAuth from './src/stream/ChatAuth.tsx';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useIsDarkMode();
 
   return (
     <SafeAreaProvider>
@@ -24,22 +22,19 @@ function App() {
 }
 
 function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
   return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <StreamIOProvider>
+          <OverlayProvider>
+            <ChatAuth>
+              <AppStackNavigator />
+            </ChatAuth>
+          </OverlayProvider>
+        </StreamIOProvider>
+      </PersistGate>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;

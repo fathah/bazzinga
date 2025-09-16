@@ -1,58 +1,71 @@
-import React, { useCallback, useMemo } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import AppBar from '../../components/common/AppBar.tsx';
-import { USERS, UserType } from '../../constants/tokens.ts';
+import React from 'react';
+import { Alert, StyleSheet } from 'react-native';
 import { APP_COLORS } from '../../constants/colors.ts';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../constants/screens.ts';
-import useUserId from '../../hooks/useUserId.ts';
+import { ChannelList } from 'stream-chat-react-native';
+import ChatController from '../../stream/connect.ts';
+import AppWrapper from '../../components/layouts/AppWrapper.tsx';
 
 const ChatIndex = () => {
-const navigation = useNavigation();
-  const curUserId = useUserId();
+  const navigation = useNavigation();
 
-  const filteredUsers = useMemo(()=>USERS.filter(user=>user.userid !== curUserId),[curUserId]);
+  const sort = {
+    last_message_at: -1,
+  };
 
-  const renderItem = useCallback(({item}:{item:UserType}) => {
-    return <TouchableOpacity style={styles.row} onPress={()=>{
-      navigation.navigate(ScreenNames.CONVERSATION, {userid:item.userid});
-
-    }}>
-      <View style={styles.profilePic}>
-        <Text style={styles.profileText}>{item.userid[0].toUpperCase()}</Text>
-      </View>
-        <Text>{item.userid}</Text>
-    </TouchableOpacity>
-  },[navigation]);
+  const options = {
+    presence: true,
+    state: true,
+    watch: true,
+  };
 
   return (
-    <View>
-      <AppBar title="Chat Screen"/>
-      <FlatList data={filteredUsers} renderItem={renderItem}/>
-    </View>
+    <AppWrapper title="Chats">
+      <ChannelList
+        sort={sort}
+        options={options}
+        onSelect={channel => {
+          const channelInst = ChatController.instance.channel(
+            'messaging',
+            channel.id,
+          );
+
+          if (!channel) {
+            Alert.alert('Channel not found');
+          }
+
+          navigation.navigate(ScreenNames.CONVERSATION, {
+            channel: channelInst,
+          });
+        }}
+      />
+    </AppWrapper>
   );
 };
 export default ChatIndex;
 
 const styles = StyleSheet.create({
-  row :{
-    borderBottomWidth:0.2,
-    borderBottomColor:APP_COLORS.GREY,
-    flexDirection:'row',
-    alignItems:'center',
-    gap:10,
-    paddingHorizontal:20,
-    paddingVertical:10
+  row: {
+    borderBottomWidth: 0.2,
+    borderBottomColor: APP_COLORS.GREY,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  profilePic:{
-    width:45, height:45,
-    borderRadius:25,
+  profilePic: {
+    width: 45,
+    height: 45,
+    borderRadius: 25,
     backgroundColor: APP_COLORS.PRIMARY,
-    justifyContent:'center',
-    alignItems:'center'
-
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  profileText:{
-    color: APP_COLORS.TINT, fontSize:20, fontWeight:'bold'
-  }
+  profileText: {
+    color: APP_COLORS.TINT,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
 });
