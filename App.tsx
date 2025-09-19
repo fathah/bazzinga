@@ -1,4 +1,4 @@
-import { StatusBar } from 'react-native';
+import { DevSettings, StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppStackNavigator from './src/navigation/AppStackNavigator.tsx';
 import useIsDarkMode from './src/hooks/useIsDarkMode.ts';
@@ -6,9 +6,17 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './src/redux/store.ts';
 import { StreamIOProvider } from './src/stream/context.tsx';
-import { OverlayProvider } from 'stream-chat-react-native';
+import { OverlayProvider, SqliteClient } from 'stream-chat-react-native';
 import React from 'react';
 import ChatAuth from './src/stream/ChatAuth.tsx';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+if (__DEV__) {
+  DevSettings.addMenuItem('Reset local DB (offline storage)', () => {
+    SqliteClient.resetDB();
+    console.info('Local DB reset');
+  });
+}
 
 function App() {
   const isDarkMode = useIsDarkMode();
@@ -16,7 +24,9 @@ function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppContent />
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

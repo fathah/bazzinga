@@ -51,5 +51,11 @@
 	<false/>
 	<key>NSMicrophoneUsageDescription</key>
     <string>Give $(PRODUCT_NAME) permission to use your microphone. Your record wont be shared without your permission.</string>
+<key>NSCameraUsageDescription</key>
+<string>$(PRODUCT_NAME) would like to use your camera to share image in a message.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>$(PRODUCT_NAME) would like access to your photo gallery to share image in a message.</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>$(PRODUCT_NAME) would like to save photos to your photo gallery after downloading from a message.</string>
 </dict>
 </plist>

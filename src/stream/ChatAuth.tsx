@@ -7,6 +7,10 @@ type ChatAuthProps = {
 };
 
 const ChatAuth = ({ children }: ChatAuthProps) => {
-  return <Chat client={streamIoClient}>{children}</Chat>;
+  return (
+    <Chat client={streamIoClient} enableOfflineSupport>
+      {children}
+    </Chat>
+  );
 };
 export default ChatAuth;
