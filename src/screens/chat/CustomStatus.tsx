@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { TripleCheck } from '../../svg/svg.tsx';
@@ -10,6 +10,7 @@ import {
   useTheme,
   useTranslationContext,
 } from 'stream-chat-react-native';
+import { getDateString } from '../../utils/date.ts';
 
 const styles = StyleSheet.create({
   date: {
@@ -41,18 +42,16 @@ export const ChannelPreviewStatus = (props: ChannelPreviewStatusProps) => {
   const created_at = latestMessagePreview.messageObject?.created_at;
   const latestMessageDate = created_at ? new Date(created_at) : new Date();
 
-  const formattedDate = '';
-
-  //     useMemo(
-  //   () =>
-  //     getDateString({
-  //       date: created_at,
-  //       t,
-  //       tDateTimeParser,
-  //       timestampTranslationKey: 'timestamp/ChannelPreviewStatus',
-  //     }),
-  //   [created_at, t, tDateTimeParser],
-  // );
+  const formattedDate = useMemo(
+    () =>
+      getDateString({
+        date: created_at,
+        t,
+        tDateTimeParser,
+        timestampTranslationKey: 'timestamp/ChannelPreviewStatus',
+      }),
+    [created_at, t, tDateTimeParser],
+  );
   const status = latestMessagePreview.status;
 
   return (
